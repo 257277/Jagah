@@ -1,0 +1,19 @@
+.box1 {
+    background: url("https://a0.muscache.com/im/pictures/miso/Hosting-668146487515150072/original/8ff2a532-e0cd-41a2-9164-554c4d9eb28a.jpeg?im_w=1200");
+    background-size: contain;
+    background-repeat: no-repeat;
+
+}
+
+.box1 h1,
+.box2 h1 {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.box2 {
+    background: url("https://a0.muscache.com/im/pictures/miso/Hosting-892636584500492829/original/c45bf8cf-2ad6-4930-8c9f-f6f3c992aedd.jpeg?im_w=1200");
+    background-size: contain;
+    background-repeat: no-repeat;
+
+}
