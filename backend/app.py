@@ -8,10 +8,11 @@ from flask_cors import CORS
 import bcrypt
 import jwt
 import os
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 CORS(app)
-
+load_dotenv()
 app.config["MONGO_URI"] = os.getenv("mongo_url")
 mongo = PyMongo(app, ssl_cert_reqs=CERT_NONE)
 

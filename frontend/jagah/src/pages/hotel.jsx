@@ -53,7 +53,7 @@ function Hotel() {
     const options = {
       method: 'GET',
       headers: {
-        'X-RapidAPI-Key': `${process.env.hotel_RapidAPI_Key}`,
+        'X-RapidAPI-Key': `${process.env.REACT_APP_hotel_RapidAPI_Key}`,
         'X-RapidAPI-Host': 'airbnb13.p.rapidapi.com'
       }
     };

@@ -45,11 +45,11 @@ function Property() {
 
   async function handleSrch() {
     let arr=[];
-    const url = `https://realtor16.p.rapidapi.com/forsale?location=${Place}`;
+    let url = `https://realtor16.p.rapidapi.com/forsale?location=${Place}`;
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': `${process.env.property_rapidAPI_Key}`,
+            'X-RapidAPI-Key': `${process.env.REACT_APP_property_rapidAPI_Key}`,
             'X-RapidAPI-Host': 'realtor16.p.rapidapi.com'
         }
     };
@@ -57,7 +57,7 @@ function Property() {
       const response = await fetch(url, options);
       const result = await response.json();
       let hot=result.home_search.results;
-     
+         console.log(hot)
        arr = hot.map((item) => (
         
         <Card key={item.property_id} maxW='sm'>
