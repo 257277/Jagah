@@ -7,7 +7,7 @@ export default function Footer()
     return (
         <div>
             <Container maxW='100%' minH="400px" bg="lightgreen" centerContent fontSize="17px">
-                <Flex>
+                <Flex direction={{ base: 'column', md: 'column',lg:"row" }}>
                     <Spacer />
                     <Box w="500px"  paddingTop="50px">
                         <UnorderedList listStyleType="none" >

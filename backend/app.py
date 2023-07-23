@@ -2,14 +2,17 @@ from ssl import CERT_NONE
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 from datetime import datetime, timedelta
+from bson import json_util
+from bson import ObjectId
 from flask_cors import CORS
 import bcrypt
 import jwt
+import os
 
 app = Flask(__name__)
 CORS(app)
 
-app.config["MONGO_URI"] = "mongodb+srv://rahulSharma:rahulSharma@cluster0.so3yn.mongodb.net/Atithi"
+app.config["MONGO_URI"] = os.getenv("mongo_url")
 mongo = PyMongo(app, ssl_cert_reqs=CERT_NONE)
 
 @app.route("/", methods=["GET"])
@@ -86,7 +89,117 @@ def login():
     # Return the response with the id and token included
     return jsonify({"message": "Login successful", "name": user["name"], "id": user_id, "token": token})
 
+@app.route("/bookHotel",methods=["POST"])
+def bookHotel():
+        hoteldata=request.get_json()
+        print(hoteldata)
+        name=hoteldata.get("name")
+        image=hoteldata.get("image")
+        bed=hoteldata.get("beds")
+        bathroom=hoteldata.get("bathroom")
+        price=hoteldata.get("price")
+        rating=hoteldata.get("rating")
+        userid=hoteldata.get("userid")
+        address=hoteldata.get("address")
+        obj = {
+            "name": name,
+            "image": image,
+            "bed": bed,
+            "bathroom": bathroom,
+            "price": price,
+            "rating": rating,
+            "address":address,
+            "status":"booked",
+            "userid": userid
+            }
+            
+        mongo.db.bookings.insert_one(obj)
+        return jsonify({"message":"Hotel is booked successfull"})
+    
+@app.route("/booking",methods=["GET"])
+def booking():
+     try:
+        data = list(mongo.db.bookings.find())
+        # Serialize the MongoDB data to JSON using json_util
+        json_data = json_util.dumps(data)
+        return jsonify({"message": json_data})
+     except Exception as e:
+        return jsonify({"message": "Error occurred while fetching data", "error": str(e)})
 
+@app.route("/cancelbooking", methods=["POST"])
+def cancelbooking():
+    try:
+        data = request.get_json()  # Get the JSON data from the request
+        booking_id = data.get("id")  # Get the booking ID from the request JSON
+
+        # Find and update the booking status to "cancelled"
+        mongo.db.bookings.update_one({"_id": ObjectId(booking_id)}, {"$set": {"status": "cancelled"}})
+
+        return jsonify({"message": "Booking is cancelled"})
+    except Exception as e:
+        return jsonify({"message": "Error occurred while cancelling booking", "error": str(e)})
+
+@app.route("/addproperty", methods=["POST"])
+def addproperty():
+    try:
+        
+        data = request.get_json()  # Get the JSON data from the request
+        property_image = data.get("image")  # Get the booking ID from the request JSON
+        property_name = data.get("name")
+        bed=data.get("bed")
+        bathroom=data.get("bathroom")
+        property_address=data.get("address")
+        property_price=data.get("price")
+        userid=data.get("userId")
+        obj={"image":property_image,"name":property_name,"bathroom":bathroom,"bed":bed,"address":property_address,"price":property_price,"status":"Not Sold","userid": userid,"Sold_To":"None"}
+        # Find and update the booking status to "cancelled"
+        mongo.db.property.insert_one(obj)
+
+        return jsonify({"message": "Property added successfully"})
+    except Exception as e:
+        return jsonify({"message": "Error occurred while adding property", "error": str(e)})
+
+@app.route("/buyProperty",methods=["POST"])
+def buyproperty():
+    try:
+        data = request.get_json()  # Get the JSON data from the request
+        property_image = data.get("image")  # Get the booking ID from the request JSON
+        property_name = data.get("name")
+        bed=data.get("bed")
+        bathroom=data.get("bathroom")
+        property_address=data.get("address")
+        property_price=data.get("price")
+        soldTo=data.get("userid")
+        obj={"image":property_image,"name":property_name,"bathroom":bathroom,"bed":bed,"address":property_address,"price":property_price,"status":"Not Sold","Sold_To":soldTo}
+        # Find and update the booking status to "cancelled"
+        mongo.db.property.insert_one(obj)
+
+        return jsonify({"message": "Property buy successfully"})
+    except Exception as e:
+        return jsonify({"message": "Error occurred while buying property", "error": str(e)})
+
+@app.route("/selfProperty", methods=["GET"])
+def selfProperty():
+    user_id = request.args.get("userId")
+
+    try:
+        data = list(mongo.db.property.find({"Sold_To": user_id}))
+        json_data = json_util.dumps(data)
+        return jsonify({"message": json_data})
+    except Exception as e:
+        return jsonify({"message": "Error occurred while fetching data", "error": str(e)})
+    
+
+@app.route("/DeleteProperty", methods=["POST"])
+def deleteProperty():
+    property_id = request.args.get("propertyId")
+    try:
+        # Convert the property_id string to an ObjectId
+        obj_id = ObjectId(property_id)
+        mongo.db.property.delete_one({"_id": obj_id})
+        return jsonify({"message": "Property deleted successfully"})
+    except Exception as e:
+        return jsonify({"message": "Error occurred while deleting property", "error": str(e)})
 
 
 if __name__ == "__main__":

@@ -1,0 +1,14 @@
+/* Corrected CSS */
+.srch {
+    border: 1px solid black;
+}
+
+.cardbody {
+    text-align: center;
+}
+
+.pht {
+    width: 80%;
+    height: 50%;
+    margin: auto;
+}

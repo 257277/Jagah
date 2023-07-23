@@ -4,9 +4,10 @@ import { Input, InputGroup, InputRightElement, Button, Divider, Center, Stack } 
 import Styles from "../pages/login-signup.module.css";
 import Navbar from "../pages/navbar";
 import Footer from "../pages/footer";
-
+import { useNavigate } from "react-router-dom";
 
 export default function LoginSignup() {
+  const navigate = useNavigate();
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [registerName, setRegisterName] = useState('');
@@ -21,7 +22,7 @@ export default function LoginSignup() {
       password: loginPassword
     };
     try{
-      const res = await fetch("http://127.0.0.1:5002/login", {
+      const res = await fetch(`${process.env.REACT_APP_BASEURL}/login`, {
         method: "POST",
         body: JSON.stringify(loginData),
         headers: {
@@ -35,10 +36,12 @@ export default function LoginSignup() {
        let id=data.id;
        let token=data.token;
        let name=data.name;
-       localStorage.setItem("id",JSON.stringify(id));
-       localStorage.setItem("token",JSON.stringify(token));
-       localStorage.setItem("name",JSON.stringify(name));
+       sessionStorage.setItem("id",JSON.stringify(id));
+       sessionStorage.setItem("token",JSON.stringify(token));
+       sessionStorage.setItem("name",JSON.stringify(name));
         alert( data.message);
+        navigate("/");
+
       } else {
         const errorData = await res.json();
         alert(errorData);
@@ -52,7 +55,7 @@ export default function LoginSignup() {
   }
 
  async function handleRegister() {
-    console.log({ name: registerName, email: registerEmail, phone: registerPhone, address: registerAddress, password: registerPassword });
+    
     const registerData = {
       name: registerName,
       email: registerEmail,
@@ -62,7 +65,7 @@ export default function LoginSignup() {
     };
    
     try {
-      const res = await fetch("http://127.0.0.1:5002/register", {
+      const res = await fetch(`${process.env.REACT_APP_BASEURL}/register`, {
         method: "POST",
         body: JSON.stringify(registerData),
         headers: {
@@ -102,7 +105,7 @@ export default function LoginSignup() {
             <TabPanel>
               <form>
                 <Stack spacing={4}>
-                  <Input placeholder='Enter Email' size='lg' value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} />
+                  <Input placeholder='Enter Email' size='lg' value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)}     fontSize={{base:"12px",md:"20px"}}/>
                   {PasswordInput(loginPassword, setLoginPassword)}
                   <Button colorScheme='green' size='lg' onClick={handleLogin}>Login</Button>
                 </Stack>
@@ -111,11 +114,11 @@ export default function LoginSignup() {
             <TabPanel>
               <form>
                 <Stack spacing={4}>
-                  <Input placeholder='Enter Name' size='lg' value={registerName} onChange={(e) => setRegisterName(e.target.value)} />
-                  <Input placeholder='Enter Email' size='lg' value={registerEmail} onChange={(e) => setRegisterEmail(e.target.value)} />
+                  <Input placeholder='Enter Name' size='lg' value={registerName} onChange={(e) => setRegisterName(e.target.value)}    fontSize={{base:"12px",md:"20px"}} />
+                  <Input placeholder='Enter Email' size='lg' value={registerEmail} onChange={(e) => setRegisterEmail(e.target.value)}    fontSize={{base:"12px",md:"20px"}} />
                   {PasswordInput(registerPassword, setRegisterPassword)}
-                  <Input placeholder='Enter Phone Number' type="number" size='lg' value={registerPhone} onChange={(e) => setRegisterPhone(e.target.value)} />
-                  <Input placeholder='Enter Address' size='lg' value={registerAddress} onChange={(e) => setRegisterAddress(e.target.value)} />
+                  <Input placeholder='Enter Phone Number' type="number" size='lg' value={registerPhone} onChange={(e) => setRegisterPhone(e.target.value)}   fontSize={{base:"12px",md:"20px"}} />
+                  <Input placeholder='Enter Address' size='lg' value={registerAddress} onChange={(e) => setRegisterAddress(e.target.value)}     fontSize={{base:"12px",md:"20px"}}/>
                   <Button colorScheme='green' size='lg' onClick={handleRegister}>Signup</Button>
                 </Stack>
               </form>
@@ -143,6 +146,7 @@ function PasswordInput(value, setValue) {
         placeholder='Enter password'
         value={value}
         onChange={(e) => setValue(e.target.value)}
+        fontSize={{base:"12px",md:"20px"}}
       />
       <InputRightElement width='4.5rem'>
         <Button h='1.75rem' size='sm' onClick={handleClick}>
