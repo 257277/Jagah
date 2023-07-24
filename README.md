@@ -65,7 +65,7 @@ To run this project, you will need to add the following environment variables to
 
 
  ## ER Diagram 
- ![https://github.com/257277/Jagah/blob/main/frontend/jagah/src/image/ER%20Diagrma.png) 
+ ![image](https://github.com/257277/Jagah/blob/main/frontend/jagah/src/image/ER%20Diagrma.png) 
 
 
 
