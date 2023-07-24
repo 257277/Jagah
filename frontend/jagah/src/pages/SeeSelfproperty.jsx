@@ -39,7 +39,7 @@ export default function SeeSelfproperty() {
             }
             else{
             try {
-                let userId = JSON.parse(localStorage.getItem('id'));
+                let userId = JSON.parse(sessionStorage.getItem('id'));
                 let response = await fetch(`${process.env.REACT_APP_BASEURL}/selfProperty?userId=${userId}`, {
                     method: "GET",
                     headers: {

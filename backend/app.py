@@ -118,9 +118,10 @@ def bookHotel():
         return jsonify({"message":"Hotel is booked successfull"})
     
 @app.route("/booking",methods=["GET"])
-def booking():
+def booking():    
      try:
-        data = list(mongo.db.bookings.find())
+        user_id = request.args.get("userId")
+        data = list(mongo.db.bookings.find({"userid": user_id}))
         # Serialize the MongoDB data to JSON using json_util
         json_data = json_util.dumps(data)
         return jsonify({"message": json_data})
@@ -184,7 +185,7 @@ def selfProperty():
     user_id = request.args.get("userId")
 
     try:
-        data = list(mongo.db.property.find({"Sold_To": user_id}))
+        data = list(mongo.db.property.find({"$or": [{"Sold_To": user_id}, {"userid": user_id}]}))
         json_data = json_util.dumps(data)
         return jsonify({"message": json_data})
     except Exception as e:

@@ -39,7 +39,8 @@ export default function Booking() {
             {alert("Please login first")}
             else{
             try {
-                let response = await fetch(`${process.env.REACT_APP_BASEURL}/booking`,{
+                let userId = JSON.parse(sessionStorage.getItem('id'));
+                let response = await fetch(`${process.env.REACT_APP_BASEURL}/booking?userId=${userId}`,{
                     method:"GET",
                     headers:{
                         'Content-Type': 'application/json'

@@ -15,7 +15,7 @@ function Property() {
       alert("Please login first");
     }
     else{
-    let obj={image:item.photos[0].href,name:item.branding[0].name,bed:item.description.beds,bathroom:item.description.baths,price:item.list_price,address:`${item.location.address.line} ${item.location.address.city} ${item.location.address.state}`,userid:JSON.parse(localStorage.getItem("id"))}
+    let obj={image:item.photos[0].href,name:item.branding[0].name,bed:item.description.beds,bathroom:item.description.baths,price:item.list_price,address:`${item.location.address.line} ${item.location.address.city} ${item.location.address.state}`,userid:JSON.parse(sessionStorage.getItem("id"))}
     const url = `${process.env.REACT_APP_BASEURL}/buyProperty`;
     const options = {
       method: 'POST',
