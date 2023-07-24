@@ -9,7 +9,7 @@ Atithi is a hotel booking and property buying and selling platform.
 # Deployment
 
 Frontend<a href="https://jagah-frontend.vercel.app/">  Click here</a> <br>
-Backend<a href="https://hospital-appointment-booking-system.onrender.com">  Click here</a> <br>
+Backend<a href="https://atithi-ifml.onrender.com">  Click here</a> <br>
 
 
 ## Tech Stack
