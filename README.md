@@ -4,12 +4,12 @@
 
 
 
-Atithi is a Hotel booking and property buying and selling platform
+Atithi is a hotel booking and property buying and selling platform.
 
 # Deployment
 
-Frontend<a href="">  Click here</a> <br>
-Backend<a href="">  Click here</a> <br>
+Frontend<a href="https://hospitalappointmentmanagementsystem-ilahiamaan606-gmailcom.vercel.app/">  Click here</a> <br>
+Backend<a href="https://hospital-appointment-booking-system.onrender.com">  Click here</a> <br>
 
 
 ## Tech Stack
@@ -21,23 +21,51 @@ Backend<a href="">  Click here</a> <br>
 **Database:** MongoDB
 
 
-## Screenshots
+## Run Locally
 
-![App Screenshot]()
+Clone the project
+
+```bash
+  git clone https://github.com/257277/Jagah
+```
+
+Go to the project directory
+
+```bash
+  cd jagah
+```
+
+Install dependencies
+
+```bash
+  npm install
+```
+
+Start the server
+
+```bash
+  npm run start
+```
+
+
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to your .env file
+
+`REACT_APP_BASEURL`
+
+`REACT_APP_hotel_RapidAPI_Key`
+
+`REACT_APP_property_rapidAPI_Key`
 
 
 
-<!-- ## Workflow Diagram
-![image](https://user-images.githubusercontent.com/112754393/229429364-4f9e7424-d5b2-4386-aad8-b4f7f22c19bf.png) -->
-
-## System Architecture
-![image]()
+ ## Workflow Diagram
+![image](https://github.com/257277/Jagah/blob/main/frontend/jagah/src/image/Screenshot%202023-07-24%20at%208.34.39%20AM.png)
 
 
-<!-- ## ER Diagram -->
-<!-- ![drawSQL-lifecare-export-2023-04-03](https://user-images.githubusercontent.com/112754547/229438041-993e6356-22cd-49b0-8905-6867cd4f36e9.png) -->
-
-
+ ## ER Diagram 
+ ![https://github.com/257277/Jagah/blob/main/frontend/jagah/src/image/ER%20Diagrma.png) 
 
 
 
