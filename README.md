@@ -1,4 +1,4 @@
-# Horizon Health
+# Atithi
 
 ![image](https://github.com/257277/Jagah/blob/main/frontend/jagah/src/image/logo.png)
 
