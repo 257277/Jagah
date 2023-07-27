@@ -1,6 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from './navbar.module.css';
+import { useDisclosure } from '@chakra-ui/react';
+import {
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  Button,
+  Input,
+  Box,
+  Flex,
+} from '@chakra-ui/react';
 
 export default function Navbar() {
   const [name, setName] = useState('');
@@ -31,7 +45,34 @@ export default function Navbar() {
 
   // Use the useNavigate hook to get the navigate function
   const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const btnRef = React.useRef();
+  const [msg, setmsg] = useState('');
+  const [list, setlist] = useState("");
 
+ async function showAddress() {
+    let obj={address:msg}
+    console.log(obj)
+    const url = `http://127.0.0.1:5002/chatbot`;
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body:JSON.stringify(obj)
+    };
+    try {
+        const response = await fetch(url, options);
+        if (!response.ok) {
+            alert('Request failed ');
+          }
+      
+        const result = await response.json();
+        setlist(result.list[1])
+      } catch (error) {
+        alert(error);
+      }
+  }
   return (
     <div className={styles.navbar}>
       <Link to="/">
@@ -61,6 +102,53 @@ export default function Navbar() {
           </Link>
         </h4>
       )}
+       <div>
+      <Button ref={btnRef} colorScheme='teal' onClick={onOpen}>
+        Atithi Guide
+      </Button>
+      <Drawer isOpen={isOpen} placement='right' onClose={onClose} finalFocusRef={btnRef}>
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerHeader>
+            Hello there! I am here to  guide you to tourist places. Please enter your Address.
+          </DrawerHeader>
+
+          <DrawerBody>
+            <Input
+              placeholder='Type here...'
+              onChange={(e) => {
+                setmsg(e.target.value);
+              }}
+            />
+          </DrawerBody>
+          <Box
+            height="55%" // Set the fixed height of the container
+            overflowY="scroll" // Enable vertical scrolling for overflowed content
+            border="1px solid #ccc" // Optional: Add a border for better visualization
+          >
+            <Flex direction="column" p="4">
+              {/* You can also use VStack instead of Flex */}
+              <Box className={styles.box1} >
+              Your Address : {msg}{/* Replace this with the actual content of your messages */}
+              </Box>
+              <Box className={styles.box2} marginTop={"10px"}>
+               {list}
+              </Box>
+              {/* Add more messages as needed */}
+            </Flex>
+          </Box>
+          <DrawerFooter>
+            <Button variant='outline' mr={3} onClick={onClose}>
+              Close me!
+            </Button>
+            <Button colorScheme='blue' onClick={showAddress}>
+              Send
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    </div>
     </div>
   );
 }

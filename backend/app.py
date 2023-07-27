@@ -9,13 +9,16 @@ import bcrypt
 import jwt
 import os
 from dotenv import load_dotenv
+import openai
+
+
 
 app = Flask(__name__)
 CORS(app)
 load_dotenv()
 app.config["MONGO_URI"] = os.getenv("mongo_url")
 mongo = PyMongo(app, ssl_cert_reqs=CERT_NONE)
-
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 @app.route("/", methods=["GET"])
 def home():
     return "Welcome to my API2"
@@ -203,6 +206,27 @@ def deleteProperty():
     except Exception as e:
         return jsonify({"message": "Error occurred while deleting property", "error": str(e)})
 
+@app.route("/chatbot",methods=["POST"])
+def chatbot():
+    try:
+        data = request.get_json()
+        address = data.get("address")
+       
+        prompt = f"You need to act as Tourist place guide. You need to reccommend the famous tourist place near the address which is enter by user and also give the distance from the user address And distance must not be greater than 50km. If there is no toursit place,address given is invalid and enter a question in place of address than give answer Sorry near you there is no tourist place .\n\nExamples:-\n\nAddress:Paris, Île-de-France, France.\n\nAnswer: The famous tourist place near your address is Palace of Versailles (Château de Versailles) - Approx. 12 miles (19 km) southwest of Paris, Disneyland Paris - Approx. 20 miles (32 km) east of Paris, Fontainebleau Palace (Château de Fontainebleau) - Approx. 35 miles (56 km) southeast of Paris, Giverny (Claude Monet's House and Gardens) - Approx. 49 miles (79 km) northwest of Paris, Château de Chantilly - Approx. 30 miles (48 km) north of Paris"
+        passing_data=prompt+" " + "prompt:"+" "+ address
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=passing_data,
+            max_tokens=500,
+            temperature=0.7
+        )
+
+        generated_list = response.choices[0].text.split("Answer:")
+
+        return jsonify({"list": generated_list})
+
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 if __name__ == "__main__":
     app.run(debug=False, port=5002)
