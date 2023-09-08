@@ -15,7 +15,7 @@ function Hotel() {
       alert("Please login first");
     }
     else{
-    let obj={name:item.name,image:item.images[0],beds:item.beds,bathroom:item.bathrooms,price:item.price,rating:item.rating,userid:JSON.parse(localStorage.getItem("id")),address:item.address}
+    let obj={name:item.name,image:item.images[0],beds:item.beds,bathroom:item.bathrooms,price:item.price,rating:item.rating,userid:JSON.parse(sessionStorage.getItem("id")),address:item.address}
     const url = `${process.env.REACT_APP_BASEURL}/bookHotel`;
     const options = {
       method: 'POST',

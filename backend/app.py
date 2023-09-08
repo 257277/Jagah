@@ -12,16 +12,18 @@ from dotenv import load_dotenv
 import openai
 
 
-
 app = Flask(__name__)
 CORS(app)
 load_dotenv()
 app.config["MONGO_URI"] = os.getenv("mongo_url")
 mongo = PyMongo(app, ssl_cert_reqs=CERT_NONE)
 openai.api_key = os.environ.get("OPENAI_API_KEY")
+
+
 @app.route("/", methods=["GET"])
 def home():
     return "Welcome to my API2"
+
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -30,15 +32,15 @@ def register():
     name = registration_data.get("name")
     email = registration_data.get("email")
     password = registration_data.get("password")
-    phone=registration_data.get("phone")
-    address=registration_data.get("address")
-    print(name,email,password,phone,address)
+    phone = registration_data.get("phone")
+    address = registration_data.get("address")
+    print(name, email, password, phone, address)
     # Check if the required fields are provided
     if not name or not email or not password:
         return jsonify({"message": "Missing required fields"})
 
     # Check if the user already exists in the database
-    existing_user =mongo.db.users.find_one({"email": email})
+    existing_user = mongo.db.users.find_one({"email": email})
     if existing_user:
         return jsonify({"message": "User already exists"})
 
@@ -50,9 +52,9 @@ def register():
         "name": name,
         "email": email,
         "password": hashed_password,
-        "phone":phone,
-        "address":address
-        
+        "phone": phone,
+        "address": address
+
     }
 
     # Insert the new user into the database
@@ -60,76 +62,74 @@ def register():
 
     return jsonify({"message": "Registration successful"})
 
+
 @app.route("/login", methods=["POST"])
 def login():
-    # Get the login data from the request
+
     login_data = request.get_json()
     email = login_data.get("email")
     password = login_data.get("password")
 
-    # Check if the required fields are provided
     if not email or not password:
         return jsonify({"message": "Missing required fields"})
 
-    # Check if the user exists in the database
     user = mongo.db.users.find_one({"email": email})
     if not user:
         return jsonify({"message": "Invalid email or password"})
 
-    # Check if the password is correct
     if not bcrypt.checkpw(password.encode("utf-8"), user["password"]):
         return jsonify({"message": "Invalid email or password"})
 
-    # Generate a JWT token with the user's email and an expiration time
     token_payload = {
         "email": user["email"],
-        "exp": datetime.utcnow() + timedelta(days=1)  # Token expiration time (1 day in this example)
+        "exp": datetime.utcnow() + timedelta(days=1)
     }
     token = jwt.encode(token_payload, "Atithi", algorithm="HS256")
 
-    # Get the user's id
     user_id = str(user["_id"])
 
-    # Return the response with the id and token included
     return jsonify({"message": "Login successful", "name": user["name"], "id": user_id, "token": token})
 
-@app.route("/bookHotel",methods=["POST"])
+
+@app.route("/bookHotel", methods=["POST"])
 def bookHotel():
-        hoteldata=request.get_json()
-        print(hoteldata)
-        name=hoteldata.get("name")
-        image=hoteldata.get("image")
-        bed=hoteldata.get("beds")
-        bathroom=hoteldata.get("bathroom")
-        price=hoteldata.get("price")
-        rating=hoteldata.get("rating")
-        userid=hoteldata.get("userid")
-        address=hoteldata.get("address")
-        obj = {
-            "name": name,
-            "image": image,
-            "bed": bed,
-            "bathroom": bathroom,
-            "price": price,
-            "rating": rating,
-            "address":address,
-            "status":"booked",
-            "userid": userid
-            }
-            
-        mongo.db.bookings.insert_one(obj)
-        return jsonify({"message":"Hotel is booked successfull"})
-    
-@app.route("/booking",methods=["GET"])
-def booking():    
-     try:
+    hoteldata = request.get_json()
+    print(hoteldata)
+    name = hoteldata.get("name")
+    image = hoteldata.get("image")
+    bed = hoteldata.get("beds")
+    bathroom = hoteldata.get("bathroom")
+    price = hoteldata.get("price")
+    rating = hoteldata.get("rating")
+    userid = hoteldata.get("userid")
+    address = hoteldata.get("address")
+    obj = {
+        "name": name,
+        "image": image,
+        "bed": bed,
+        "bathroom": bathroom,
+        "price": price,
+        "rating": rating,
+        "address": address,
+        "status": "booked",
+        "userid": userid
+    }
+
+    mongo.db.bookings.insert_one(obj)
+    return jsonify({"message": "Hotel is booked successfull"})
+
+
+@app.route("/booking", methods=["GET"])
+def booking():
+    try:
         user_id = request.args.get("userId")
         data = list(mongo.db.bookings.find({"userid": user_id}))
         # Serialize the MongoDB data to JSON using json_util
         json_data = json_util.dumps(data)
         return jsonify({"message": json_data})
-     except Exception as e:
+    except Exception as e:
         return jsonify({"message": "Error occurred while fetching data", "error": str(e)})
+
 
 @app.route("/cancelbooking", methods=["POST"])
 def cancelbooking():
@@ -138,25 +138,29 @@ def cancelbooking():
         booking_id = data.get("id")  # Get the booking ID from the request JSON
 
         # Find and update the booking status to "cancelled"
-        mongo.db.bookings.update_one({"_id": ObjectId(booking_id)}, {"$set": {"status": "cancelled"}})
+        mongo.db.bookings.update_one({"_id": ObjectId(booking_id)}, {
+                                     "$set": {"status": "cancelled"}})
 
         return jsonify({"message": "Booking is cancelled"})
     except Exception as e:
         return jsonify({"message": "Error occurred while cancelling booking", "error": str(e)})
 
+
 @app.route("/addproperty", methods=["POST"])
 def addproperty():
     try:
-        
+
         data = request.get_json()  # Get the JSON data from the request
-        property_image = data.get("image")  # Get the booking ID from the request JSON
+        # Get the booking ID from the request JSON
+        property_image = data.get("image")
         property_name = data.get("name")
-        bed=data.get("bed")
-        bathroom=data.get("bathroom")
-        property_address=data.get("address")
-        property_price=data.get("price")
-        userid=data.get("userId")
-        obj={"image":property_image,"name":property_name,"bathroom":bathroom,"bed":bed,"address":property_address,"price":property_price,"status":"Not Sold","userid": userid,"Sold_To":"None"}
+        bed = data.get("bed")
+        bathroom = data.get("bathroom")
+        property_address = data.get("address")
+        property_price = data.get("price")
+        userid = data.get("userId")
+        obj = {"image": property_image, "name": property_name, "bathroom": bathroom, "bed": bed,
+               "address": property_address, "price": property_price, "status": "Not Sold", "userid": userid, "Sold_To": "None"}
         # Find and update the booking status to "cancelled"
         mongo.db.property.insert_one(obj)
 
@@ -164,18 +168,21 @@ def addproperty():
     except Exception as e:
         return jsonify({"message": "Error occurred while adding property", "error": str(e)})
 
-@app.route("/buyProperty",methods=["POST"])
+
+@app.route("/buyProperty", methods=["POST"])
 def buyproperty():
     try:
         data = request.get_json()  # Get the JSON data from the request
-        property_image = data.get("image")  # Get the booking ID from the request JSON
+        # Get the booking ID from the request JSON
+        property_image = data.get("image")
         property_name = data.get("name")
-        bed=data.get("bed")
-        bathroom=data.get("bathroom")
-        property_address=data.get("address")
-        property_price=data.get("price")
-        soldTo=data.get("userid")
-        obj={"image":property_image,"name":property_name,"bathroom":bathroom,"bed":bed,"address":property_address,"price":property_price,"status":"Not Sold","Sold_To":soldTo}
+        bed = data.get("bed")
+        bathroom = data.get("bathroom")
+        property_address = data.get("address")
+        property_price = data.get("price")
+        soldTo = data.get("userid")
+        obj = {"image": property_image, "name": property_name, "bathroom": bathroom, "bed": bed,
+               "address": property_address, "price": property_price, "status": "Not Sold", "Sold_To": soldTo}
         # Find and update the booking status to "cancelled"
         mongo.db.property.insert_one(obj)
 
@@ -183,17 +190,20 @@ def buyproperty():
     except Exception as e:
         return jsonify({"message": "Error occurred while buying property", "error": str(e)})
 
+
 @app.route("/selfProperty", methods=["GET"])
 def selfProperty():
     user_id = request.args.get("userId")
-
+    print("userid", user_id)
     try:
-        data = list(mongo.db.property.find({"$or": [{"Sold_To": user_id}, {"userid": user_id}]}))
+        data = list(mongo.db.property.find(
+            {"$or": [{"Sold_To": user_id}, {"userid": user_id}]}))
         json_data = json_util.dumps(data)
+        print(json_data)
         return jsonify({"message": json_data})
     except Exception as e:
         return jsonify({"message": "Error occurred while fetching data", "error": str(e)})
-    
+
 
 @app.route("/DeleteProperty", methods=["POST"])
 def deleteProperty():
@@ -206,14 +216,15 @@ def deleteProperty():
     except Exception as e:
         return jsonify({"message": "Error occurred while deleting property", "error": str(e)})
 
-@app.route("/chatbot",methods=["POST"])
+
+@app.route("/chatbot", methods=["POST"])
 def chatbot():
     try:
         data = request.get_json()
         address = data.get("address")
-       
+
         prompt = f"You need to act as Tourist place guide. You need to reccommend the famous tourist place near the address which is enter by user and also give the distance from the user address And distance must not be greater than 50km. If there is no toursit place,address given is invalid and enter a question in place of address than give answer Sorry near you there is no tourist place .\n\nExamples:-\n\nAddress:Paris, Île-de-France, France.\n\nAnswer: The famous tourist place near your address is Palace of Versailles (Château de Versailles) - Approx. 12 miles (19 km) southwest of Paris, Disneyland Paris - Approx. 20 miles (32 km) east of Paris, Fontainebleau Palace (Château de Fontainebleau) - Approx. 35 miles (56 km) southeast of Paris, Giverny (Claude Monet's House and Gardens) - Approx. 49 miles (79 km) northwest of Paris, Château de Chantilly - Approx. 30 miles (48 km) north of Paris"
-        passing_data=prompt+" " + "prompt:"+" "+ address
+        passing_data = prompt+" " + "prompt:"+" " + address
         response = openai.Completion.create(
             model="text-davinci-003",
             prompt=passing_data,
@@ -227,6 +238,7 @@ def chatbot():
 
     except Exception as e:
         return jsonify({"error": str(e)})
+
 
 if __name__ == "__main__":
     app.run(debug=False, port=5002)

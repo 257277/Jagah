@@ -31,7 +31,7 @@ function AddProperty() {
       alert("Please login first!")
     }
     else{
-    const propertyDetail={"image":propertyImage,"name":propertyName,"bathroom":bathroom,"bed":beds,"address":propertyAddress,"price":propertyPrice,"userId":JSON.parse(localStorage.getItem("id"))}
+    const propertyDetail={"image":propertyImage,"name":propertyName,"bathroom":bathroom,"bed":beds,"address":propertyAddress,"price":propertyPrice,"userId":JSON.parse(sessionStorage.getItem("id"))}
     try {
         const res = await fetch(`${process.env.REACT_APP_BASEURL}/addproperty`, {
           method: "POST",
